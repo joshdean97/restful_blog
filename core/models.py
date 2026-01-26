@@ -2,6 +2,13 @@ from .extensions import db
 from sqlalchemy.dialects.postgresql import ARRAY
 
 
+class User(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    email = db.Column(db.String(55), unique=True, nullable=False)
+    username = db.Column(db.String(55), unique=True, nullable=False)
+    password_hash = db.Column(db.String(55), nullable=False)
+
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(55), nullable=False)

@@ -1,6 +1,6 @@
 from flask import Flask
 from .extensions import db, ma, migrate
-from .models import Post
+from .models import Post, User
 from .routes.blog import blog_bp
 
 
