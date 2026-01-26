@@ -2,6 +2,7 @@ from flask import Flask
 from .extensions import db, ma, migrate
 from .models import Post, User
 from .routes.blog import blog_bp
+from .routes.users import users
 
 
 def create_app():
@@ -17,5 +18,6 @@ def create_app():
 
     # register blueprints
     app.register_blueprint(blog_bp)
+    app.register_blueprint(users)
 
     return app
