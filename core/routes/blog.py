@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 from sqlalchemy import or_
+from flask_jwt_extended import jwt_required, current_user
 
 from ..extensions import db
 from ..models import Post
@@ -11,8 +12,10 @@ blog_bp = Blueprint("blog_bp", __name__, url_prefix="/blog")
 
 # create blog post
 @blog_bp.route("/", methods=["POST"])
+@jwt_required()
 def create_blog():
     new_post = post_schema.load(request.json)
+    new_post.author = current_user.username
 
     db.session.add(new_post)
     db.session.commit()

@@ -1,6 +1,8 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask_jwt_extended import current_user, jwt_required
+
 from ..models import User
 from ..schemas import user_schema, users_schema
 from ..extensions import db
@@ -26,6 +28,12 @@ def get_users():
     users = User.query.all()
 
     return users_schema.dump(users), 200
+
+
+@users.route("/me", methods=["GET"])
+@jwt_required()
+def get_current_user():
+    return user_schema.dump(current_user)
 
 
 @users.route("/<int:id>", methods=["GET"])

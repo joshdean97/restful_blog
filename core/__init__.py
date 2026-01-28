@@ -1,4 +1,6 @@
 from flask import Flask
+import datetime
+
 from .extensions import db, ma, migrate, jwt
 from .models import Post, User
 from .routes.blog import blog_bp
@@ -12,12 +14,18 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///blog.db"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["JWT_SECRET_KEY"] = "DJFOIEFREIF"
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = datetime.timedelta(hours=2)
 
     # initialize extensions
     db.init_app(app)
     ma.init_app(app)
     migrate.init_app(app, db)
     jwt.init_app(app)
+
+    @jwt.user_lookup_loader
+    def user_lookup_callback(_jwt_header, jwt_data):
+        identity = jwt_data["sub"]
+        return User.query.filter_by(id=identity).one_or_none()
 
     # register blueprints
     app.register_blueprint(blog_bp)
