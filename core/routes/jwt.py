@@ -4,9 +4,11 @@ from flask_jwt_extended import (
     jwt_required,
     get_jwt_identity,
     current_user,
+    get_jwt,
 )
 from werkzeug.security import check_password_hash
 from ..models import User
+from ..data_set import jwt_blocklist
 
 jwt_bp = Blueprint("jwt_bp", __name__, url_prefix="/jwt")
 
@@ -25,6 +27,15 @@ def login():
     access_token = create_access_token(identity=str(user_id))
 
     return jsonify(access_token)
+
+
+@jwt_bp.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"]
+    jwt_blocklist.add(jti)
+    print(jwt_blocklist)
+    return jsonify(msg="Logged Out"), 200
 
 
 @jwt_bp.route("/", methods=["GET"])

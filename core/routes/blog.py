@@ -15,6 +15,7 @@ blog_bp = Blueprint("blog_bp", __name__, url_prefix="/blog")
 @jwt_required()
 def create_blog():
     new_post = post_schema.load(request.json)
+    # author is set to Anon by default - if the user has a username the author will be changed to this
     new_post.author = current_user.username
 
     db.session.add(new_post)
